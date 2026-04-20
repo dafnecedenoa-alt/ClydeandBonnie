@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Clyde & Bonnie - Anti-Agence site web, Bruxelles</title>
+
+<style>
+  @font-face {
+    font-family: 'Bazar';
+    src: url('Source/Fonts/Bazar-Regular.woff2') format('woff2'),
+         url('Source/Fonts/Bazar-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding-top: 70px;
+    background-color: #000;
+    color: #fff;
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ─── NAV ─────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 70px;
+    background-color: rgba(17,17,17,0.95);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    z-index: 100;
+  }
+  nav .f-brand img { height: 30px; width: auto; display: block; }
+
+  .menu-toggle {
+    width: 30px; height: 24px;
+    cursor: pointer;
+    display: flex; flex-direction: column; justify-content: space-between;
+    user-select: none; padding: 2px 0;
+    z-index: 20000; position: relative;
+  }
+  .menu-toggle div {
+    background-color: #fff; height: 3px; border-radius: 2px;
+    transition: all 0.3s ease; transform-origin: center;
+  }
+  .menu-toggle.open div:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .menu-toggle.open div:nth-child(2) { opacity: 0; }
+  .menu-toggle.open div:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* ─── MENU ────────────────────────────────────
+     ✅ z-index: 20000 — AU-DESSUS de Marvin (15000)
+     ✅ bottom: 0 — couvre toute la hauteur sans être coupé
+     ✅ Pas de bottom: 52px qui cachait les derniers liens
+  ─────────────────────────────────────────────── */
+  #main-menu {
+    position: fixed;
+    top: 70px; left: 0; right: 0; bottom: 0;
+    background-color: #111;
+    overflow-y: auto;
+    z-index: 20000;
+    display: none;
+  }
+  #main-menu.open { display: block; }
+  #main-menu ul { list-style: none; margin: 0; padding: 0; display: block; }
+  #main-menu ul li {
+    display: block; margin: 0; padding: 0;
+    border-bottom: 1px solid #333;
+  }
+  #main-menu ul li a {
+    display: block; width: 100%;
+    padding: 1rem 1.5rem;
+    font-family: 'Bazar', serif; text-transform: uppercase;
+    font-size: 1.25rem; font-weight: 400;
+    letter-spacing: 0.05em;
+    color: #fff; text-decoration: none;
+    transition: color 0.15s, background-color 0.15s;
+    cursor: pointer;
+  }
+  #main-menu ul li a:hover { color: #2affd8; background-color: #1a1a1a; }
+  #main-menu ul li a.nav-contact { color: #6d28d9; }
+  #main-menu ul li a.nav-contact:hover { color: #2affd8; background-color: #1a1a1a; }
+
+  /* ─── UTILITAIRES ─────────────────────────── */
+  .sec-tag {
+    display: block;
+    font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase;
+    color: #6d28d9; margin-bottom: 1rem;
+  }
+
+  /* ─── CTA BUTTONS ─────────────────────────── */
+  .cta-btn {
+    display: inline-block;
+    background-color: #6d28d9; color: #fff;
+    font-family: 'DM Mono', monospace; font-weight: 400;
+    font-size: 1rem; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.9rem 2.5rem;
+    border: none; border-radius: 0; text-decoration: none;
+    transition: background-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .cta-btn:hover {
+    background-color: #fff; color: #000;
+    transform: scale(1.03);
+  }
+
+  .cta-btn2 {
+    display: inline-block;
+    background-color: #000; color: #fff;
+    font-family: 'DM Mono', monospace; font-weight: 400;
+    font-size: 1rem; text-transform: uppercase; letter-spacing: 0.08em;
+    margin-top: 10px;
+    padding: 0.9rem 2.5rem;
+    border: 1px solid #444; border-radius: 0; text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .cta-btn2:hover {
+    border-color: #fff;
+    transform: scale(1.03);
+  }
+
+  /* ─── HERO ───────────────────────────────── */
+  .hero {
+    padding: 5rem 1.5rem 4rem;
+    border-bottom: 1px solid #222;
+    display: flex; flex-direction: column; gap: 2rem;
+  }
+  h1.hero-title {
+    font-family: 'Bazar', serif; font-weight: 400;
+    font-size: clamp(2.8rem, 7vw, 6.5rem);
+    line-height: 1.0; text-transform: uppercase;
+    letter-spacing: 0.1em; margin: 0; padding: 0;
+  }
+  h1.hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px #fff; }
+  h1.hero-title .solid { color: #fff; }
+  .hero p {
+    font-family: 'DM Mono', monospace; font-size: 0.95rem;
+    color: #aaa; line-height: 1.8;
+    margin: 0; padding: 0; max-width: 640px;
+  }
+
+  /* ─── IMAGE ───────────────────────────────── */
+  .image-wrapper { margin: 0; padding: 0; }
+  .image-wrapper img { width: 100%; height: auto; display: block; }
+
+  /* ─── SECTIONS ────────────────────────────── */
+  .section { padding: 5rem 1.5rem; border-bottom: 1px solid #222; }
+
+  h2.s-title {
+    font-family: 'Bazar', serif; font-weight: 400;
+    font-size: clamp(1.8rem, 4.5vw, 4rem);
+    line-height: 1.20; text-transform: uppercase;
+    letter-spacing: 0.08em; margin: 0 0 1.5rem 0; padding: 0;
+  }
+  h2.s-title .outline { color: transparent; -webkit-text-stroke: 1px #fff; }
+  h2.s-title .solid { color: #fff; }
+
+  .s-lead {
+    max-width: 680px; font-family: 'DM Mono', monospace;
+    font-size: 0.95rem; color: #aaa; line-height: 1.85;
+    margin: 0 0 3rem 0; padding: 0;
+  }
+
+  /* ─── ÉTAPES ──────────────────────────────── */
+  .steps {
+    display: grid; grid-template-columns: 1fr;
+    gap: 1px; background: #222; border: 1px solid #222;
+  }
+  @media (min-width: 768px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .step { background: #000; padding: 2.5rem 2rem; }
+  .step-num {
+    font-family: 'Bazar', serif; font-size: 3rem; color: #1a1a1a;
+    line-height: 1; margin: 0 0 1rem 0; display: block;
+  }
+  .step h3 {
+    font-family: 'Bazar', serif; font-weight: 400;
+    font-size: 1.4rem; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #fff; margin: 0 0 1rem 0; padding: 0;
+  }
+  .step p {
+    font-family: 'DM Mono', monospace; font-size: 0.85rem;
+    color: #777; line-height: 1.75; margin: 0; padding: 0;
+  }
+
+  /* ─── FEATURES — style geo.html ──────────── */
+  .what-we-do-list {
+    list-style: none; margin: 0 0 3rem 0; padding: 0; max-width: 760px;
+  }
+  .what-we-do-list li {
+    display: flex; align-items: baseline; gap: 0;
+    padding: 1.5rem 0; border-bottom: 1px solid #1c1c1c;
+  }
+  .what-we-do-list li:first-child { border-top: 1px solid #1c1c1c; }
+  .what-we-do-list li::before {
+    content: '→';
+    font-family: 'DM Mono', monospace; font-size: 2rem;
+    color: #2affd8; flex-shrink: 0; margin-right: 1.25rem; line-height: 1.6;
+  }
+  .wwd-text { display: block; }
+  .wwd-title {
+    font-family: 'Bazar', serif; font-weight: 400;
+    font-size: 1.2rem; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #fff; display: block; margin-bottom: 0.25rem;
+  }
+  .wwd-desc {
+    font-family: 'DM Mono', monospace; font-size: 0.85rem;
+    color: #666; line-height: 1.7; display: block;
+  }
+
+  .s-tagline {
+    font-family: 'Bazar', serif; font-weight: 400;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    text-transform: uppercase; letter-spacing: 0.08em; color: #fff;
+    margin: 0 0 2rem 0; padding: 0 0 0 1rem;
+    border-left: 3px solid #6d28d9;
+  }
+
+  /* ─── FOOTER H2 SIGNATURE ─────────────────── */
+  .footer-h2-section { padding: 5rem 1.5rem; border-bottom: 1px solid #222; }
+  .footer-h2-section h2 {
+    font-family: 'Bazar', serif; font-weight: 400;
+    font-size: clamp(2rem, 5vw, 5rem);
+    line-height: 1.05; text-transform: uppercase;
+    letter-spacing: 0.1em; margin: 0; padding: 0; color: #fff;
+  }
+  .footer-h2-section h2 .outline { color: transparent; -webkit-text-stroke: 1.5px #fff; }
+
+  /* ─── FOOTER ──────────────────────────────── */
+  footer {
+    width: 100%; padding: 24px 1.5rem calc(52px + 24px);
+    display: flex; flex-wrap: wrap; flex-direction: column; gap: 16px;
+    border-top: 1px solid #222; background-color: #000; box-sizing: border-box;
+  }
+  .f-brand { display: flex; align-items: center; }
+  .f-brand img { height: 22px; width: auto; display: block; }
+  .f-links ul {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-wrap: wrap; gap: 1.5rem;
+  }
+  .f-links ul li { margin: 0; padding: 0; }
+  /* ✅ Footer hover — augmentation du gras */
+  .f-links ul li a {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: #555; text-decoration: none;
+    font-weight: 400;
+    transition: color 0.2s ease, font-weight 0.1s ease;
+    display: inline-block;
+  }
+  .f-links ul li a:hover,
+  .f-links ul li a:focus {
+    color: #fff;
+    font-weight: 500;
+    outline: none;
+  }
+  .f-copy {
+    font-family: 'DM Mono', monospace; font-size: 10px; color: #333;
+    border-top: 1px solid #1a1a1a; padding-top: 16px; margin-top: 4px;
+  }
+  @media (min-width: 768px) {
+    footer { flex-direction: row; align-items: center; padding: 24px 2rem calc(52px + 24px); }
+    .f-brand { flex: 0 0 auto; margin-right: 2rem; }
+    .f-links { flex: 1 1 auto; }
+    .f-copy { flex: 0 0 auto; margin-top: 0; border-top: none; padding-top: 0; }
+  }
+
+  /* ─── MARVIN ──────────────────────────────── */
+  .marvin-wrap {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    z-index: 15000;
+    display: flex; flex-direction: column; align-items: stretch;
+  }
+  .marvin-window {
+    width: 100%; height: 420px;
+    background: #0d0d0d; border-top: 1px solid #2a2a2a;
+    display: flex; flex-direction: column; overflow: hidden;
+    opacity: 0; pointer-events: none; transform: translateY(100%);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .marvin-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .marvin-header {
+    background: #000; color: #fff; font-family: 'Bazar', serif;
+    font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 12px 16px; border-bottom: 1px solid #222;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none; flex-shrink: 0;
+  }
+  .marvin-header-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #6d28d9; box-shadow: 0 0 6px #6d28d9;
+  }
+  .marvin-messages {
+    flex: 1; padding: 14px 16px; overflow-y: auto;
+    color: #ccc; font-family: 'DM Mono', monospace;
+    font-size: 0.85rem; line-height: 1.6; background: #0d0d0d;
+  }
+  .marvin-messages p { margin: 6px 0; padding: 0; }
+  .marvin-msg-user { color: #fff; text-align: right; }
+  .marvin-messages::-webkit-scrollbar { width: 4px; }
+  .marvin-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  .marvin-input-area {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; background: #000;
+    border-top: 1px solid #222; flex-shrink: 0;
+  }
+  .marvin-input {
+    flex: 1; background: #111; border: 1px solid #333;
+    border-radius: 4px; padding: 8px 12px;
+    font-family: 'DM Mono', monospace; font-size: 0.85rem;
+    color: #ddd; outline: none; transition: border-color 0.2s;
+  }
+  .marvin-input:focus { border-color: #6d28d9; }
+  .marvin-input::placeholder { color: #555; }
+  .marvin-send {
+    background: #6d28d9; border: none; border-radius: 4px;
+    width: 32px; height: 32px; display: flex; align-items: center;
+    justify-content: center; color: #fff; font-size: 1rem;
+    cursor: pointer; flex-shrink: 0; transition: background-color 0.2s;
+  }
+  .marvin-send:hover { background: #7e3ff2; }
+  .marvin-pill {
+    display: flex; align-items: center; gap: 12px;
+    background: #111; border-top: 1px solid #6d28d9;
+    padding: 10px 16px; cursor: pointer; user-select: none;
+    transition: background-color 0.2s; width: 100%;
+  }
+  .marvin-pill:hover { background: #1a1a1a; }
+  @keyframes marvin-pulse {
+    0%   { box-shadow: 0 0 0 0    rgba(59,130,246,0.7); }
+    60%  { box-shadow: 0 0 0 10px rgba(59,130,246,0);   }
+    100% { box-shadow: 0 0 0 0    rgba(59,130,246,0);   }
+  }
+  .marvin-pill-m {
+    background: radial-gradient(circle at 40% 35%, #60a5fa, #1d4ed8 60%, #1e3a8a);
+    color: #fff; font-family: 'Bazar', serif; font-size: 0.95rem;
+    width: 32px; height: 32px; border-radius: 50%; border: none;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; animation: marvin-pulse 2s ease-out infinite;
+  }
+  .marvin-pill-input {
+    flex: 1; background: transparent; border: none;
+    border-bottom: 1px solid #2a2a2a; padding: 4px 0;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #555; outline: none; pointer-events: none;
+  }
+  .marvin-pill-input::placeholder { color: #444; }
+  .marvin-pill-arrow { font-size: 14px; color: #6d28d9; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────── -->
+<nav>
+  <div class="f-brand">
+    <img src="Source/Images/Clyde-and-bonnie-agency.png" alt="Clyde and Bonnie" />
+  </div>
+  <div class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" role="button" tabindex="0">
+    <div></div><div></div><div></div>
+  </div>
+</nav>
+
+<!-- ✅ Menu hors <nav>, z-index 20000 > Marvin 15000 -->
+<div id="main-menu" role="dialog" aria-label="Menu principal">
+  <ul>
+    <li><a href="#">Accueil</a></li>
+    <li><a href="#">À propos</a></li>
+    <li><a href="#">IA &amp; Web</a></li>
+    <li><a href="#">GEO</a></li>
+    <li><a href="#">SEO</a></li>
+    <li><a href="Index1.html">Site web IA</a></li>
+    <li><a href="#">Google Ads</a></li>
+    <li><a href="#">Réseaux sociaux</a></li>
+    <li><a href="index2.html" class="nav-contact">Contact →</a></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION HERO
+═══════════════════════════════════════════ -->
+<section class="hero">
+  <span class="sec-tag">Service personnalisé · Experts et IA · Bruxelles</span>
+  <h1 class="hero-title">
+    <span class="solid">AGENCE +</span> <span class="outline">IA</span><br>
+    <span class="solid">CRÉATION DE<br>SITE</span> <span class="outline">WEB</span>
+  </h1>
+  <p>
+    Fusion de la puissance de l'IA et la rigueur du marketing de terrain.
+    Là où l'algorithme s'arrête, l'expertise humaine de nos spécialistes prend le relais.
+    Résultat professionnel garanti.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     IMAGE
+═══════════════════════════════════════════ -->
+<div class="image-wrapper">
+  <img src="Source/Images/Les_experts_derriere_le_robot.jpg" alt="Les experts derrière le robot" />
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION APPROCHE
+═══════════════════════════════════════════ -->
+<section class="section">
+  <span class="sec-tag">Notre approche</span>
+  <h2 class="s-title">
+    <span class="solid">DEUX EXPERTS, UN ROBOT,<br></span>
+    <span class="outline">L'OBJECTIF :</span><br>
+    <span class="solid">DES SITES PERFORMANTS.</span>
+  </h2>
+  <p class="s-lead">
+    Nous concevons des sites web pilotés par l'IA.<br>
+    Moins de friction, plus de performance.
+    Zéro abonnement. Zéro template générique.
+    Un service digital conçu pour générer du résultat,
+    alliant la rapidité de notre IA Marvin, et optimisé par des experts en stratégie digitale.<br><br>
+    Votre prochain projet commence ici.
+  </p>
+  <a href="#" class="cta-btn">Créer mon site web</a>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION PROCESSUS
+═══════════════════════════════════════════ -->
+<section class="section">
+  <span class="sec-tag">Comment ça marche</span>
+  <h2 class="s-title">
+    <span class="solid">VOTRE SITE WEB, DE L'IDÉE</span><br>
+    <span class="outline">AU RÉSULTAT CONCRET</span>
+  </h2>
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">01</span>
+      <h3>Le Prompt stratégique</h3>
+      <p>Vous décrivez vos besoins à notre IA — Marvin. En quelques minutes, l'architecture technique et visuelle de votre site est générée.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">02</span>
+      <h3>L'ajustement par nos professionnels</h3>
+      <p>Nos experts analysent le rendu. Nous peaufinons le design, ajustons le storytelling et vérifions chaque point de performance technique.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">03</span>
+      <h3>Collaboration et validation finale</h3>
+      <p>Vous échangez directement avec nous. Vous gardez le contrôle total sur l'identité de votre marque, nous apportons la maîtrise technique.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION CE QU'ON LIVRE
+═══════════════════════════════════════════ -->
+<section class="section">
+  <span class="sec-tag">Ce qu'on livre</span>
+  <h2 class="s-title" style="margin-bottom: 2.5rem;">
+    <span class="outline">L'IA POSE LES FONDATIONS,</span><br>
+    <span class="solid">LES EXPERTS BÂTISSENT<br>VOTRE SUCCÈS</span>
+  </h2>
+
+  <ul class="what-we-do-list">
+    <li>
+      <span class="wwd-text">
+        <span class="wwd-title">Optimisation conversion</span>
+        <span class="wwd-desc">Une structure pensée pour transformer vos visiteurs en clients. Chaque élément de la page est positionné pour guider vers l'action.</span>
+      </span>
+    </li>
+    <li>
+      <span class="wwd-text">
+        <span class="wwd-title">SEO de précision</span>
+        <span class="wwd-desc">Un contenu calibré pour dominer les moteurs de recherche. Architecture sémantique, maillage interne, données structurées.</span>
+      </span>
+    </li>
+    <li>
+      <span class="wwd-text">
+        <span class="wwd-title">Maintenance active</span>
+        <span class="wwd-desc">Nous gérons les mises à jour techniques pour vous. Votre site reste performant, sécurisé et à jour sans que vous ayez à intervenir.</span>
+      </span>
+    </li>
+  </ul>
+
+  <p class="s-lead">
+    Grâce à l'alliance entre la rapidité de l'IA et la finesse stratégique de Clyde &amp; Bonnie,
+    vous obtenez un outil de vente prêt à l'emploi en un temps record.
+  </p>
+
+  <h2 class="s-title">Ne laissez rien au hasard</h2>
+  <p class="s-lead">Demande à Marvin quels sont les avantages pour ton business, de créer un site web par IA avec nos experts.</p>
+
+  <div style="display:flex; flex-direction:column; align-items:flex-start; gap:12px;">
+    <a href="#" class="cta-btn">Créer mon site web</a>
+    <a href="#" class="cta-btn2">Demander à Marvin</a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     H2 FINAL — SIGNATURE
+═══════════════════════════════════════════ -->
+<div class="footer-h2-section">
+  <h2>
+    <span class="outline">CLYDE &amp; BONNIE</span><br>
+    <span style="color:#fff; font-family:'Bazar',serif; font-weight:400;">ANTI-AGENCE SITE WEB,<br>BRUXELLES</span>
+  </h2>
+</div>
+
+<!-- ─── MARVIN ─────────────────────────────────── -->
+<div class="marvin-wrap" aria-label="Chatbot Marvin">
+  <div class="marvin-window" id="marvinWindow" role="region" aria-hidden="true">
+    <div class="marvin-header">
+      <span>Marvin</span>
+      <div class="marvin-header-dot"></div>
+    </div>
+    <div class="marvin-messages" id="marvinMessages" tabindex="0">
+      <p class="marvin-msg-bot">Bonjour ! Comment puis-je vous aider ?</p>
+    </div>
+    <div class="marvin-input-area">
+      <input type="text" id="marvinInput" class="marvin-input" placeholder="Posez votre question à Marvin..." autocomplete="off" aria-label="Message" />
+      <button class="marvin-send" aria-label="Envoyer">↑</button>
+    </div>
+  </div>
+  <div class="marvin-pill" id="marvinToggle" role="button" tabindex="0" aria-pressed="false" aria-label="Ouvrir le chat">
+    <div class="marvin-pill-m">M</div>
+    <input class="marvin-pill-input" type="text" placeholder="Posez votre question à Marvin..." tabindex="-1" readonly />
+    <span class="marvin-pill-arrow">↑</span>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─────────────────────────────────── -->
+<footer>
+  <div class="f-brand">
+    <img src="Source/Images/Clyde-and-bonnie-agency.png" alt="Clyde and Bonnie" />
+  </div>
+  <div class="f-links">
+    <ul>
+      <li><a href="index2.html">Accueil</a></li>
+      <li><a href="about.html">À propos</a></li>
+      <li><a href="ai-web.html">IA &amp; Web</a></li>
+      <li><a href="geo.html">GEO</a></li>
+      <li><a href="seo.html">SEO</a></li>
+      <li><a href="#">Site web IA</a></li>
+      <li><a href="google-ads.html">Google Ads</a></li>
+      <li><a href="social.html">Réseaux sociaux</a></li>
+      <li><a href="contact.html">Contact →</a></li>
+    </ul>
+  </div>
+  <div class="f-copy">Cantersteen 12, 1000 Bruxelles · TVA BE0807.698.016 · © Clyde and Bonnie SRL 2026</div>
+</footer>
+
+<script>
+  // Menu
+  const menuToggle = document.getElementById('menuToggle');
+  const mainMenu   = document.getElementById('main-menu');
+  menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('open');
+    mainMenu.classList.toggle('open');
+  });
+  menuToggle.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); menuToggle.click(); }
+  });
+
+  // Marvin
+  const toggleBtn  = document.getElementById('marvinToggle');
+  const chatWindow = document.getElementById('marvinWindow');
+  const input      = document.getElementById('marvinInput');
+  const sendBtn    = document.querySelector('.marvin-send');
+  const messages   = document.getElementById('marvinMessages');
+
+  function toggleChat() {
+    const isOpen = chatWindow.classList.toggle('open');
+    toggleBtn.setAttribute('aria-pressed', String(isOpen));
+    chatWindow.setAttribute('aria-hidden', String(!isOpen));
+    if (isOpen) { input.focus(); messages.scrollTop = messages.scrollHeight; }
+  }
+  toggleBtn.addEventListener('click', toggleChat);
+  toggleBtn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleChat(); }
+  });
+
+  function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    const p = document.createElement('p');
+    p.className = 'marvin-msg-user';
+    p.textContent = text;
+    messages.appendChild(p);
+    input.value = '';
+    input.focus();
+    messages.scrollTop = messages.scrollHeight;
+    setTimeout(() => {
+      const reply = document.createElement('p');
+      reply.className = 'marvin-msg-bot';
+      reply.textContent = "Merci pour votre message ! Nous vous répondrons très vite.";
+      messages.appendChild(reply);
+      messages.scrollTop = messages.scrollHeight;
+    }, 1000);
+  }
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+  });
+</script>
+
+</body>
+</html>
